@@ -8,10 +8,28 @@
  * If you are using Composer, you can skip this step.
  */
 #require 'Slim/Slim.php';
-require 'models/User.php';
+use Slim\Slim,
+    Slim\Log;
+
+require_once 'utils/APIUtils.php';
+require_once 'utils/LogWriter.php';
+require_once 'models/User.php';
 require 'vendor/autoload.php';
 
-\Slim\Slim::registerAutoloader();
+Slim::registerAutoloader();
+
+// load the motive.properties file
+$properties = parse_ini_file("../config/motive.properties");
+
+$propertiesArr = array(
+    'debug' => $properties['debug'],
+    'mode' => $properties['mode'],
+    'database.hostname' => $properties['database.hostname'],
+    'database.port' => $properties['database.hostname'],
+    'log.enabled' => $properties['log.enabled'],
+    'log.level' => $properties['log.level'],
+    'log.writer' => new LogWriter()
+);
 
 /**
  * Step 2: Instantiate a Slim application
@@ -21,7 +39,7 @@ require 'vendor/autoload.php';
  * your Slim application now by passing an associative array
  * of setting names and values into the application constructor.
  */
-$app = new \Slim\Slim();
+$app = new Slim($propertiesArr);
 
 /**
  * Step 3: Define the Slim application routes
@@ -33,14 +51,31 @@ $app = new \Slim\Slim();
  */
 
 $app->get('/user/:id', function($id) {
-    echo User::getUser($id);
+    $app = Slim::getInstance();
+    $user = new User();
+    $result = $user->getUser($id);
+    APIUtils::configureResponse($app->response(), $result);
+    echo json_encode($result);
 });
 
 // POST route
 $app->post('/user/create', function () {
-    $user = new User();
-    $user->createUser('','','','','');
-    //echo User::createUser('','','','','');
+    $app = Slim::getInstance();
+    // validate the POST request
+    $result = APIUtils::validateRequest($app->request());
+
+    if($result['successful'] == TRUE) {
+        $user = new User($app->getLog());
+        $userDetails = $result['result'];
+        echo json_encode($user->createUser(
+            $userDetails['first_name'],
+            $userDetails['last_name'],
+            $userDetails['email_address'],
+            $userDetails['username'],
+            $userDetails['credential']));
+    } else {
+        echo json_encode($result);
+    }
 });
 
 // GET route
