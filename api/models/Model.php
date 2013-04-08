@@ -16,6 +16,9 @@ class Model
 	protected $log;
 	protected $app;
 
+	/**
+	 * Constructor
+	 */
 	function __construct() {
 		$this->app = Slim::getInstance();
 		$this->db_client = new Client($this->app->config("database.hostname", 

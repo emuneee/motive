@@ -19,6 +19,20 @@ class User extends Model
 	}
 
 	/**
+	 * Returns boolean is the user with the username and credential
+	 * combo exists
+	 */
+	function doesUserWithCredentialExist($username, $credential) {
+		$queryString = "START n=node:users(username = '$username' 
+			AND credential = '$credential') RETURN n";
+		$resultSet = $this->executeQuery($queryString);
+		if($resultSet->count() > 0) {
+			return APIUtils::wrapResult("$username is already taken", FALSE);
+		}
+		else return APIUtils::wrapResult();
+	}
+
+	/**
 	 * Returns false result if a user already with the email address already exists
 	 */
 	function doesUserWithEmailAddressExist($email_address) {

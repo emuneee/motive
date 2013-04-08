@@ -28,7 +28,8 @@ $propertiesArr = array(
     'database.port' => $properties['database.hostname'],
     'log.enabled' => $properties['log.enabled'],
     'log.level' => $properties['log.level'],
-    'log.writer' => new LogWriter()
+    'log.writer' => new LogWriter(),
+    'session.duration' => $properties['session.duration']
 );
 
 /**
