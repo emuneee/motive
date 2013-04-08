@@ -17,7 +17,7 @@ Slim PHP (http://www.slimframework.com/)
 --Apache and PHP--
 May already be installed, if not, please use your OS standard way of installing software packages.
 
---Neo4j-- 
+--Neo4j
 Can be acquired from: http://www.neo4j.org/download
 Once installed, start the Neo4j server: sudo {NEO4J Home}/bin/neo4j start
 
