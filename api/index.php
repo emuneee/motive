@@ -14,6 +14,7 @@ use Slim\Slim,
 require_once 'utils/APIUtils.php';
 require_once 'utils/LogWriter.php';
 require_once 'models/User.php';
+require_once 'models/Session.php';
 require 'vendor/autoload.php';
 
 Slim::registerAutoloader();
@@ -59,6 +60,22 @@ $app->get('/user/:id', function($id) {
     echo json_encode($result);
 });
 
+$app->post('/authenticate', function() {
+    $app = Slim::getInstance();
+    // validate the POST request
+    $result = APIUtils::validateRequest($app->request());
+    if($result['successful'] == TRUE) {
+        $session = new Session();
+        $userDetails = $result['result'];
+        $result = $session->createSession(
+            $userDetails['username'],
+            $userDetails['credential']);
+    } 
+   
+    APIUtils::configureResponse($app->response(), $result);
+    echo json_encode($result);
+});
+
 // POST route
 $app->post('/user/create', function () {
     $app = Slim::getInstance();
@@ -66,17 +83,18 @@ $app->post('/user/create', function () {
     $result = APIUtils::validateRequest($app->request());
 
     if($result['successful'] == TRUE) {
-        $user = new User($app->getLog());
+        $user = new User();
         $userDetails = $result['result'];
-        echo json_encode($user->createUser(
+        $result= $user->createUser(
             $userDetails['first_name'],
             $userDetails['last_name'],
             $userDetails['email_address'],
             $userDetails['username'],
-            $userDetails['credential']));
-    } else {
-        echo json_encode($result);
-    }
+            $userDetails['credential']);
+    } 
+
+    APIUtils::configureResponse($app->response(), $result);
+    echo json_encode($result);
 });
 
 // GET route

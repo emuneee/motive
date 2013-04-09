@@ -1,8 +1,13 @@
 <?php
 
+use phpSec\Crypt\Hash,
+	phpSec\Core,
+	Everyman\Neo4j\Node,
+	Everyman\Neo4j\Relationship,
+	Everyman\Neo4j\Client;
+
 require_once 'Model.php';
 require_once 'User.php';
-require_once '../libs/phpseclib/Crypt/Hash.php'
 
 /**
  * Provides mechanisms for authenticating with the API
@@ -19,18 +24,16 @@ class Session extends Model
 	 */
 	function createSession($username, $credential) {
 		$user = new User();
-		$result = $user->doesUserWithCredentialExist($username, $credential);
-
-		if($result["successful"] == TRUE) {
-			// correct user credentials were presented, we should create a session
-
+		$userId = $user->getUserWithCredential($username, $credential);
+ 
+		if($userId["result"] != -1) {
+			$this->log->info("Node with ID ".$userId['result']." found");
 			//lets create a unique hash
-			$duration = $this->app->config("session.duration")));
+			$duration = $this->app->config("session.duration");
 			$timestamp = time();
 			// hash
-			$hash = new $Hash();
-			$hash->setHash("md5");
-			$session_key = $hash->hash($timestamp.$username.$credential);
+			$hash = new Hash(new Core());
+			$session_key = $hash->create($timestamp.$username.$credential);
 			// add the duration to the current time stamp
 			$session_expire = strtotime("+".$duration." seconds", $timestamp);
 			// store the session id/expire time in database
@@ -38,9 +41,27 @@ class Session extends Model
 			$session->setProperty("session_key", $session_key);
 			$session->setProperty("session_expire", $session_expire);
 			$session->setProperty("session_create_timestamp", $timestamp);
-			// TODO create a relationship between the user and the session
+			// create a relationship between the user and the session
+			$userNode = $this->db_client->getNode($userId['result']);
+			// create the relationship
+			$relationship = $this->db_client->makeRelationship();
+			$relationship->setStartNode($userNode);
+			$relationship->setEndNode($session);
+			$relationship->setType("AUTHENTICATES");
 
-			// TODO return the hash for the client to use in subsquent sessions
+			try {
+				// save the session
+				$session->save();
+				// save the relationship...lol
+				$relationship->save();
+				$sessionDetails = array('session_key' => $session_key,
+					'session_expire' => $session_expire);
+				return APIUtils::wrapResult($sessionDetails);
+			} catch (Exception $e) {
+				$this->log->error("Error creating a new user session");
+				$this->log->error($e->getMessage());
+				return APIUtils::wrapResult("Error creating a new user session", FALSE);
+			}
 		} else {
 			return APIUtils::wrapResult("Incorrect username/password combination", FALSE);
 		}

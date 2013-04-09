@@ -1,5 +1,9 @@
 {
-    "hash": "8d57095465c60d08973a6fd848720f76",
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
+    ],
+    "hash": "4f197d4215cee56b9fc96adc33b9acb9",
     "packages": [
         {
             "name": "everyman/neo4jphp",
@@ -44,6 +48,59 @@
                 "neo4j"
             ],
             "time": "2013-03-07 01:50:01"
+        },
+        {
+            "name": "phpsec/phpsec",
+            "version": "0.6.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpsec/phpSec.git",
+                "reference": "0.6.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpsec/phpSec/zipball/0.6.1",
+                "reference": "0.6.1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.7"
+            },
+            "suggest": {
+                "ext-mcrypt": "The Mcrypt extension is used to encrypt data.",
+                "ext-openssl": "The OpenSSL extension is used as a secure source of random data."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "phpSec": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Audun Larsen",
+                    "email": "larsen@xqus.com",
+                    "homepage": "http://xqus.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A PHP security library",
+            "homepage": "https://phpseclib.com/",
+            "keywords": [
+                "authy",
+                "cryptography",
+                "encryption",
+                "google auth",
+                "otp",
+                "security",
+                "session",
+                "yubikey"
+            ],
+            "time": "2013-02-25 16:31:04"
         },
         {
             "name": "slim/slim",

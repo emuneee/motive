@@ -19,17 +19,20 @@ class User extends Model
 	}
 
 	/**
-	 * Returns boolean is the user with the username and credential
-	 * combo exists
+	 * Returns the user node with the specified username and credential
+	 * Returns -1 if it does not exist
 	 */
-	function doesUserWithCredentialExist($username, $credential) {
-		$queryString = "START n=node:users(username = '$username' 
-			AND credential = '$credential') RETURN n";
+	function getUserWithCredential($username, $credential) {
+		$queryString = "START n=node:users('username:\"$username\" 
+			AND credential:\"$credential\"') RETURN n";
 		$resultSet = $this->executeQuery($queryString);
-		if($resultSet->count() > 0) {
-			return APIUtils::wrapResult("$username is already taken", FALSE);
-		}
-		else return APIUtils::wrapResult();
+		$userId = -1;
+		if($resultSet->count() == 1) {
+			foreach ($resultSet as $row) {
+				$userId = $row['x']->getId();
+			}
+		} 
+		return APIUtils::wrapResult($userId, TRUE);
 	}
 
 	/**
@@ -116,6 +119,7 @@ class User extends Model
 				$userIndex->add($user, "last_name", $user->getProperty("last_name"));
 				$userIndex->add($user, "username", $user->getProperty("username"));
 				$userIndex->add($user, "email_address", $user->getProperty("email_address"));
+				$userIndex->add($user, "credential", $user->getProperty("credential"));
 				$userIndex->save();
 				return APIUtils::wrapResult($user->getId());
 			} catch (Exception $e) {

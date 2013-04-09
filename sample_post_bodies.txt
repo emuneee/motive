@@ -1,0 +1,15 @@
+
+// create new user post body
+{
+"first_name": "Evan",
+"last_name": "Halley",
+"email_address": "evan.halley@gmail.com",
+"credential": "12345678",
+"username": "emuneee"
+}
+
+// create authenticated session post body
+{
+"credential": "12345678",
+"username": "ehalley"
+}
