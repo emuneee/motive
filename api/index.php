@@ -54,19 +54,28 @@ $app = new Slim($propertiesArr);
 
 $app->get('/user/:id', function($id) {
     $app = Slim::getInstance();
-    $user = new User();
-    $result = $user->getUser($id);
-    APIUtils::configureResponse($app->response(), $result);
+    $result = APIUtils::validateAuthGetRequest($app->request());
+    if($result['successful'] == TRUE) {
+        $session = new Session();
+        $payload = $result['payload'];
+        $result = $session->validateSessionKey($payload['username'], 
+            $payload['session_key']);
+        if($result['successful'] == TRUE) {
+            $user = new User();
+            $result = $user->getUser($id);
+            APIUtils::configureResponse($app->response(), $result);
+        }    
+    }
     echo json_encode($result);
 });
 
 $app->post('/authenticate', function() {
     $app = Slim::getInstance();
     // validate the POST request
-    $result = APIUtils::validateRequest($app->request());
+    $result = APIUtils::validatePostRequest($app->request());
     if($result['successful'] == TRUE) {
         $session = new Session();
-        $userDetails = $result['result'];
+        $userDetails = $result['payload'];
         $result = $session->createSession(
             $userDetails['username'],
             $userDetails['credential']);
@@ -80,11 +89,11 @@ $app->post('/authenticate', function() {
 $app->post('/user/create', function () {
     $app = Slim::getInstance();
     // validate the POST request
-    $result = APIUtils::validateRequest($app->request());
+    $result = APIUtils::validatePostRequest($app->request());
 
     if($result['successful'] == TRUE) {
         $user = new User();
-        $userDetails = $result['result'];
+        $userDetails = $result['payload'];
         $result= $user->createUser(
             $userDetails['first_name'],
             $userDetails['last_name'],

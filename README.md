@@ -5,13 +5,6 @@ Motive is a top secret project
 
 Motive is not a real name.
 
-{ "first_name": "Evan",
-"last_name": "Halley",
-"username": "ehalley",
-"email_address": "evan.halley@hotmail.com",
-"credential": "12345678"}
-
-
 ---Environment Setup---
 
 Required software

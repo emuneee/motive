@@ -18,9 +18,26 @@ class APIUtils
 	}
 	
 	/**
+	 * Valiadtes if the proper authentication credentials are in the header
+	 */
+	function validateAuthGetRequest($request) {
+		$result = APIUtils::wrapResult(
+			'Username and/or session key not included with request', FALSE);
+		$session_key = $request->headers('session_key');
+		$username = $request->headers('username');
+		if(isset($session_key) && isset($username)) {
+			$session_properties = array(
+				"username" => $username,
+				"session_key" => $session_key);
+			$result = APIUtils::wrapResult($session_properties);
+		}
+		return $result;
+	}
+
+	/**
 	 * Validates whether or not we have a valid HTTP request
 	 */
-	public static function validateRequest($request) {
+	public static function validatePostRequest($request) {
 		$content_type = $request->headers('Content-Type');
 		// make sure the content-type is application/json
 		if($content_type != 'application/json') {
@@ -35,10 +52,10 @@ class APIUtils
 	/**
 	 * wrap result in an envelope containing any status messages
 	 */
-	public static function wrapResult($result = '', $successful = TRUE) {
+	public static function wrapResult($payload = '', $successful = TRUE) {
 		$result_arr = array(
 		 'successful' => $successful,
-			'result' => $result);
+			'payload' => $payload);
 		return $result_arr;
 	}
 }

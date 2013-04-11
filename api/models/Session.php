@@ -8,12 +8,16 @@ use phpSec\Crypt\Hash,
 
 require_once 'Model.php';
 require_once 'User.php';
+require_once $_SERVER['DOCUMENT_ROOT'].'/utils/APIUtils.php';
 
 /**
  * Provides mechanisms for authenticating with the API
  */
 class Session extends Model
 {
+	const AUTH_REL = "AUTHENTICATES";
+
+
 	function __construct() {
 		parent::__construct();
 	}
@@ -47,7 +51,7 @@ class Session extends Model
 			$relationship = $this->db_client->makeRelationship();
 			$relationship->setStartNode($userNode);
 			$relationship->setEndNode($session);
-			$relationship->setType("AUTHENTICATES");
+			$relationship->setType(AUTH_REL);
 
 			try {
 				// save the session
@@ -68,9 +72,9 @@ class Session extends Model
 	}
 
 	/**
-	 * Validate session key
+	 * Validate session key is active and valid for the current user
 	 */
-	function validateSessionKey() {
-
+	function validateSessionKey($username, $session_key) {
+		return APIUtils::wrapResult("Session is not valid", FALSE);
 	}
 }

@@ -104,6 +104,7 @@ class User extends Model
 				return $result;
 			}
 			$userIndex = new NodeIndex($this->db_client, 'users');
+			$timestamp = time();
 
 			$user = new Node($this->db_client);
 			$user->setProperty("first_name", $first_name);
@@ -111,6 +112,8 @@ class User extends Model
 			$user->setProperty("email_address", $email_address);
 			$user->setProperty("username", $username);
 			$user->setProperty("credential", $credential);
+			$user->setProperty("create_datetime", $timestamp);
+			$user->setProperty("update_datetime", $timestamp);
 
 			try {
 				$user = $user->save();
@@ -121,7 +124,13 @@ class User extends Model
 				$userIndex->add($user, "email_address", $user->getProperty("email_address"));
 				$userIndex->add($user, "credential", $user->getProperty("credential"));
 				$userIndex->save();
-				return APIUtils::wrapResult($user->getId());
+				$createdUser = array(
+					"first_name" => $first_name,
+					"last_name" => $last_name,
+					"email_address" => $email_address,
+					"username" => $username,
+					"user_id" => $user->getId());
+				return APIUtils::wrapResult($createdUser);
 			} catch (Exception $e) {
 				$this->log->error("Error creating a new user");
 				$this->log->error($e->getMessage());
