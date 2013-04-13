@@ -14,19 +14,23 @@
 * Using [`Neo4jPHP`](https://github.com/jadell/Neo4jPHP)
 * Using [`Slim PHP`](http://www.slimframework.com/)
 
+
 ##Apache and PHP
 
 May already be installed, if not, please use your OS standard way of installing software packages.
+
 
 ##Neo4j
 
 Can be acquired from: http://www.neo4j.org/download
 Once installed, start the Neo4j server: sudo {NEO4J Home}/bin/neo4j start
 
+
 ##Slim PHP / Neo4jPHP
 
 Motive uses PHP Composer to download and initialize PHP libraries.  Install PHP Composer for your operating system:
 http://getcomposer.org/download/
+
 
 --Download Motive--
 git clone git@github.com:emuneee/motive.git
