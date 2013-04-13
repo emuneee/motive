@@ -4,15 +4,15 @@
 * Motive is not a real name.
 
 ### Table of Contents  
-[Environment Setup](#envsetup)
-[Required Software](#required-software)
-[Install Apache and PHP](#apache-and-php)
-[Install Neo4j](#neo4j)
-[Install Composer](#composer)
-[Install Slim PHP / Neo4jPHP](#slim-and-neo4j)
-[Download Motive](#motive)
-[Apache Setup](#apache)
-[Enable URL Rewrite](#rewrite)
+[Environment Setup](#envsetup)  
+[Required Software](#required-software)  
+[Install Apache and PHP](#apache-and-php)  
+[Install Neo4j](#neo4j)  
+[Install Composer](#composer)  
+[Install Slim PHP / Neo4jPHP](#slim-and-neo4j)  
+[Download Motive](#motive)  
+[Apache Setup](#apache)  
+[Enable URL Rewrite](#rewrite)  
 
 
 <a name="evnsetup"/>
