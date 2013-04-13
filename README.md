@@ -44,19 +44,22 @@ http://getcomposer.org/download/
 
 Run PHP composer to download Neo4jPHP and Slim PHP libraries
 
-From /motive/api/ run:
+From /motive/api run:
 
-	php composer.phar install
+	`php composer.phar install`
 
 	-or-
 
-	composer install
+	`composer install`
 
 ###Apache Setup
 
-Configure `Apache 2.2.22` to point to the {Motive GIT source folder}/api/ by configuring httpd.conf (please see system documentation)
-
-*Note: I've added a motive.conf file the we can use for the configuration below*
+1. Configure `Apache 2.2.22` to point to the Motive application by updating /motive/motive.conf
+*Open /motive/motive.conf and update the `DocumentRoot` and `Directory` with your own paths
+*Copy motive.conf to your APACHE_HOME/users directory
+	`cp /motive/motive.conf <APACHE_HOME>/users`
+2. Uncomment the PHP5 module in your Apache configuration file at <APACHE_HOME>/httpd.conf
+	`LoadModule php5_module libexec/apache2/libphp5.so`
 
 ###Enabled URL Rewrite
 
