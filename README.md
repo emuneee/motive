@@ -9,13 +9,13 @@ motive
 Environment Setup
 -----------------
 
-**Required software**
+**Required Software**
 
-'Apache 2.2.22'
-'PHP 5.3.10'
-'Neo4j Server 1.8.2'
-'[Neo4jPHP](https://github.com/jadell/Neo4jPHP)'
-'[Slim PHP](http://www.slimframework.com/)'
+* Using 'Apache 2.2.22' web server
+* Using 'PHP 5.3.10'
+* Using 'Neo4j Server 1.8.2'
+* Using '[Neo4jPHP](https://github.com/jadell/Neo4jPHP)'
+* Using '[Slim PHP](http://www.slimframework.com/)'
 
 --Apache and PHP--
 May already be installed, if not, please use your OS standard way of installing software packages.
