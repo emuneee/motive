@@ -57,7 +57,7 @@ From /motive/api run:
 1. Configure `Apache 2.2.22` to point to the Motive application by updating /motive/motive.conf
 	* Open /motive/motive.conf and update the `DocumentRoot` and `Directory` with your own paths
 	* Copy motive.conf to your APACHE_HOME/users directory
-		`cp /motive/motive.conf <APACHE_HOME>/users`
+		* `cp /motive/motive.conf <APACHE_HOME>/users`
 2. Uncomment the PHP5 module in your Apache configuration file at <APACHE_HOME>/httpd.conf
 	`LoadModule php5_module libexec/apache2/libphp5.so`
 
