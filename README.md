@@ -10,6 +10,7 @@ Environment Setup
 -----------------
 
 **Required software**
+
 'Apache 2.2.22'
 'PHP 5.3.10'
 'Neo4j Server 1.8.2'
