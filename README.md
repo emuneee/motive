@@ -15,35 +15,35 @@
 * [`Slim PHP`](http://www.slimframework.com/)
 
 
-##Apache and PHP
+###Apache and PHP
 
 May already be installed, if not, please use your OS standard way of installing software packages.
 
 
-##Neo4j
+###Neo4j
 
 Can be acquired from: http://www.neo4j.org/download
 Once installed, start the Neo4j server: sudo {NEO4J Home}/bin/neo4j start
 
 
-##Slim PHP / Neo4jPHP
+###Slim PHP / Neo4jPHP
 
 Motive uses PHP Composer to download and initialize PHP libraries.  Install PHP Composer for your operating system:
 http://getcomposer.org/download/
 
 
-##Download Motive
+###Download Motive
 
 	git clone git@github.com:emuneee/motive.git
 
 Run PHP composer to download Neo4jPHP and Slim PHP libraries in the root of the Motive GIT source folder:
 php composer.phar install
 
-##Apache Setup
+###Apache Setup
 
 Configure `Apache 2.2.22` to point to the {Motive GIT source folder}/api/ by configuring httpd.conf (please see system documentation)
 
-##Enabled URL Rewrite
+###Enabled URL Rewrite
 
 	cd /etc/apache2/mods-enabled #Apache modules folder
 	ln -s ../mods-available/rewrite.load rewrite.load
