@@ -31,8 +31,7 @@ Once installed, start the Neo4j server: sudo {NEO4J Home}/bin/neo4j start
 
 Motive uses PHP Composer to download and initialize PHP libraries.
 
-Install PHP Composer for your operating system:
-http://getcomposer.org/download/
+Install PHP Composer for your operating system: http://getcomposer.org/download/
 
 
 ###Slim PHP / Neo4jPHP
@@ -40,17 +39,17 @@ http://getcomposer.org/download/
 
 ###Download Motive
 
-	git clone git@github.com:emuneee/motive.git
+`git clone git@github.com:emuneee/motive.git`
 
 Run PHP composer to download Neo4jPHP and Slim PHP libraries
 
 From /motive/api run:
 
-	`php composer.phar install`
+`php composer.phar install`
 
-	-or-
+-or-
 
-	`composer install`
+`composer install`
 
 ###Apache Setup
 
@@ -62,7 +61,7 @@ From /motive/api run:
 	* Comment out `AllowOverride none`
 	* Add in `AllowOverride all`
 3. Uncomment the PHP5 module in your Apache configuration file at <APACHE_HOME>/httpd.conf
-	`LoadModule php5_module libexec/apache2/libphp5.so`
+	* `LoadModule php5_module libexec/apache2/libphp5.so`
 
 ###Enabled URL Rewrite
 
