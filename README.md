@@ -1,11 +1,24 @@
-#motive
+#Motive
 
 * Motive is a top secret project
 * Motive is not a real name.
 
+### Table of Contents  
+[Environment Setup](#envsetup)  
+[Required Software](#required-software)  
+[Install Apache and PHP](#apache-and-php)  
+[Install Neo4j](#neo4j)  
+[Install Composer](#composer)  
+[Install Slim PHP / Neo4jPHP](#slim-and-neo4j)  
+[Download Motive](#motive)  
+[Apache Setup](#apache)  
+[Enable URL Rewrite](#rewrite)  
 
+
+<a name="evnsetup"/>
 ##Environment Setup
 
+<a name="required-software"/>
 **Required Software**
 
 * `Apache 2.2.22`
@@ -15,47 +28,59 @@
 * [`Neo4jPHP`](https://github.com/jadell/Neo4jPHP)
 * [`Slim PHP`](http://www.slimframework.com/)
 
-
-###Install Apache and PHP
+<a name="apache-and-php"/>
+##Install Apache and PHP
 
 May already be installed, if not, please use your OS standard way of installing software packages.
 
-
-###Neo4j
+<a name="neo4j"/>
+##Neo4j
 
 Can be acquired from: http://www.neo4j.org/download
 Once installed, start the Neo4j server: sudo {NEO4J Home}/bin/neo4j start
 
-
-###Composer
+<a name="composer"/>
+##Composer
 
 Motive uses PHP Composer to download and initialize PHP libraries.
 
-Install PHP Composer for your operating system:
-http://getcomposer.org/download/
+Install PHP Composer for your operating system: http://getcomposer.org/download/
 
+<a name="slim-and-neo4j"/>
+##Slim PHP / Neo4jPHP
 
-###Slim PHP / Neo4jPHP
+<a name="motive"/>
+##Download Motive
 
+`git clone git@github.com:emuneee/motive.git`
 
-###Download Motive
+Run PHP composer to download Neo4jPHP and Slim PHP libraries
 
-	git clone git@github.com:emuneee/motive.git
+From /motive/api run:
 
-Run PHP composer to download Neo4jPHP and Slim PHP libraries in the root of the Motive GIT source folder:
-php composer.phar install
+`php composer.phar install`
 
-###Apache Setup
+-or-
 
-Configure `Apache 2.2.22` to point to the {Motive GIT source folder}/api/ by configuring httpd.conf (please see system documentation)
+`composer install`
 
-###Enabled URL Rewrite
+<a name="apache"/>
+##Apache Setup
 
-	cd /etc/apache2/mods-enabled #Apache modules folder
-	ln -s ../mods-available/rewrite.load rewrite.load
+1. Configure `Apache 2.2.22` to point to the Motive application by updating /motive/motive.conf
+	* Open /motive/motive.conf and update the `DocumentRoot` and `Directory` with your own paths
+	* Copy motive.conf to your APACHE_HOME/users directory
+		* `cp /motive/motive.conf <APACHE_HOME>/users`
+2. In your Apache configuration file at `<APACHE_HOME>/httpd.conf`, find the directory access configuration `<Directory />`, and update:
+	* Comment out `AllowOverride none`
+	* Add in `AllowOverride all`
+3. Uncomment the PHP5 module in your Apache configuration file at APACHE_HOME/httpd.conf
+	* `LoadModule php5_module libexec/apache2/libphp5.so`
 
-In httpd.conf for the site corresponding to Motive...
+<a name="rewrite"/>
+##Enable URL Rewrite
 
-Change `AllowOverride none` to `AllowOverride all`
-
-Restart Apache2
+```
+cd /etc/apache2/mods-enabled #Apache modules folder
+ln -s ../mods-available/rewrite.load rewrite.load
+```
