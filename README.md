@@ -8,11 +8,11 @@
 
 **Required Software**
 
-* Using `Apache 2.2.22` web server
-* Using `PHP 5.3.10`
-* Using `Neo4j Server 1.8.2`
-* Using [`Neo4jPHP`](https://github.com/jadell/Neo4jPHP)
-* Using [`Slim PHP`](http://www.slimframework.com/)
+* `Apache 2.2.22`
+* `PHP 5.3.10`
+* `Neo4j Server 1.8.2`
+* [`Neo4jPHP`](https://github.com/jadell/Neo4jPHP)
+* [`Slim PHP`](http://www.slimframework.com/)
 
 
 ##Apache and PHP
@@ -32,8 +32,9 @@ Motive uses PHP Composer to download and initialize PHP libraries.  Install PHP 
 http://getcomposer.org/download/
 
 
---Download Motive--
-git clone git@github.com:emuneee/motive.git
+##Download Motive
+
+	git clone git@github.com:emuneee/motive.git
 
 Run PHP composer to download Neo4jPHP and Slim PHP libraries in the root of the Motive GIT source folder:
 php composer.phar install
