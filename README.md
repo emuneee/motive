@@ -6,7 +6,6 @@
 
 ##Environment Setup
 
-```no-highlight
 **Required Software**
 
 * `Apache 2.2.22`
