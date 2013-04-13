@@ -42,12 +42,21 @@ http://getcomposer.org/download/
 
 	git clone git@github.com:emuneee/motive.git
 
-Run PHP composer to download Neo4jPHP and Slim PHP libraries in the root of the Motive GIT source folder:
-php composer.phar install
+Run PHP composer to download Neo4jPHP and Slim PHP libraries
+
+From /motive/api/ run:
+
+	php composer.phar install
+
+	-or-
+
+	composer install
 
 ###Apache Setup
 
 Configure `Apache 2.2.22` to point to the {Motive GIT source folder}/api/ by configuring httpd.conf (please see system documentation)
+
+*Note: I've added a motive.conf file the we can use for the configuration below*
 
 ###Enabled URL Rewrite
 
