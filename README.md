@@ -60,10 +60,10 @@ From /motive/api run:
 2. In your Apache configuration file at `<APACHE_HOME>/httpd.conf`, find the directory access configuration `<Directory />`, and update:
 	* Comment out `AllowOverride none`
 	* Add in `AllowOverride all`
-3. Uncomment the PHP5 module in your Apache configuration file at <APACHE_HOME>/httpd.conf
+3. Uncomment the PHP5 module in your Apache configuration file at APACHE_HOME/httpd.conf
 	* `LoadModule php5_module libexec/apache2/libphp5.so`
 
 ###Enabled URL Rewrite
 
-	cd /etc/apache2/mods-enabled #Apache modules folder
-	ln -s ../mods-available/rewrite.load rewrite.load
+`cd /etc/apache2/mods-enabled #Apache modules folder
+ln -s ../mods-available/rewrite.load rewrite.load`
