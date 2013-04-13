@@ -66,4 +66,5 @@ From /motive/api run:
 ###Enabled URL Rewrite
 
 `cd /etc/apache2/mods-enabled #Apache modules folder
+
 ln -s ../mods-available/rewrite.load rewrite.load`
