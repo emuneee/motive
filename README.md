@@ -39,16 +39,17 @@ http://getcomposer.org/download/
 Run PHP composer to download Neo4jPHP and Slim PHP libraries in the root of the Motive GIT source folder:
 php composer.phar install
 
---Apache Setup--
-Configure Apache 2.2.22 to point to the {Motive GIT source folder}/api/ by configuring httpd.conf (please see system documentation)
+##Apache Setup
 
---Enabled URL Rewrite--
-cd /etc/apache2/mods-enabled (or where ever your Apache configuration files are)
-ln -s ../mods-available/rewrite.load rewrite.load
+Configure `Apache 2.2.22` to point to the {Motive GIT source folder}/api/ by configuring httpd.conf (please see system documentation)
+
+##Enabled URL Rewrite
+
+	cd /etc/apache2/mods-enabled #Apache modules folder
+	ln -s ../mods-available/rewrite.load rewrite.load
+
 In httpd.conf for the site corresponding to Motive...
 
-Change AllowOverride none to AllowOverride all
+Change `AllowOverride none` to `AllowOverride all`
 
 Restart Apache2
-
-
