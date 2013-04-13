@@ -1,18 +1,20 @@
 motive
 ======
 
-Motive is a top secret project
+* Motive is a top secret project
 
-Motive is not a real name.
+* Motive is not a real name.
 
----Environment Setup---
 
-Required software
-Apache 2.2.22
-PHP 5.3.10
-Neo4j Server 1.8.2
-Neo4jPHP (https://github.com/jadell/Neo4jPHP)
-Slim PHP (http://www.slimframework.com/)
+Environment Setup
+-----------------
+
+**Required software**
+'Apache 2.2.22'
+'PHP 5.3.10'
+'Neo4j Server 1.8.2'
+'[Neo4jPHP](https://github.com/jadell/Neo4jPHP)'
+'[Slim PHP](http://www.slimframework.com/)'
 
 --Apache and PHP--
 May already be installed, if not, please use your OS standard way of installing software packages.
