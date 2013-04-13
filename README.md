@@ -58,16 +58,13 @@ From /motive/api run:
 	* Open /motive/motive.conf and update the `DocumentRoot` and `Directory` with your own paths
 	* Copy motive.conf to your APACHE_HOME/users directory
 		* `cp /motive/motive.conf <APACHE_HOME>/users`
-2. Uncomment the PHP5 module in your Apache configuration file at <APACHE_HOME>/httpd.conf
+2. In your Apache configuration file at `<APACHE_HOME>/httpd.conf`, find the directory access configuration `<Directory />`, and update:
+	* Comment out `AllowOverride none`
+	* Add in `AllowOverride all`
+3. Uncomment the PHP5 module in your Apache configuration file at <APACHE_HOME>/httpd.conf
 	`LoadModule php5_module libexec/apache2/libphp5.so`
 
 ###Enabled URL Rewrite
 
 	cd /etc/apache2/mods-enabled #Apache modules folder
 	ln -s ../mods-available/rewrite.load rewrite.load
-
-In httpd.conf for the site corresponding to Motive...
-
-Change `AllowOverride none` to `AllowOverride all`
-
-Restart Apache2
