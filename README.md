@@ -41,6 +41,6 @@ In httpd.conf for the site corresponding to Motive...
 
 Change AllowOverride none to AllowOverride all
 
-Restart Apache
+Restart Apache2
 
 
