@@ -54,7 +54,7 @@ Install PHP Composer for your operating system: http://getcomposer.org/download/
 
 `git clone git@github.com:emuneee/motive.git`
 
-Run PHP composer to download Neo4jPHP and Slim PHP libraries
+Run PHP composer to download Neo4jPHP, Slim PHP, and PHPSec libraries
 
 From /motive/api run:
 
@@ -69,6 +69,7 @@ From /motive/api run:
 
 1. Configure `Apache 2.2.22` to point to the Motive application by updating /motive/motive.conf
 	* Open /motive/motive.conf and update the `DocumentRoot` and `Directory` with your own paths
+		* `DocumentRoot` should point to .../motive/api
 	* Copy motive.conf to your APACHE_HOME/users directory
 		* `cp /motive/motive.conf <APACHE_HOME>/users`
 2. In your Apache configuration file at `<APACHE_HOME>/httpd.conf`, find the directory access configuration `<Directory />`, and update:
@@ -88,3 +89,8 @@ mkdir /etc/apache2/mods-enabled #If directory does not already exist
 cd /etc/apache2/mods-enabled
 ln -s ../mods-available/rewrite.load rewrite.load
 ```
+
+<a name="test"/>
+##Test Your Setup
+
+1.  Visit http://localhost/index.php.  If the Slim PHP page loads, your setup is correct.  If not, check your Apache logs for errors.
