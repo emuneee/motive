@@ -81,8 +81,12 @@ From /motive/api run:
 <a name="rewrite"/>
 ##Enable URL Rewrite
 
+This step is necessary for us to expose our API.
+
+
 ```
-cd /etc/apache2/mods-enabled #Apache modules folder
+mkdir /etc/apache2/mods-enabled #If directory does not already exist
+cd /etc/apache2/mods-enabled
 ln -s ../mods-available/rewrite.load rewrite.load
 ```
 
