@@ -17,8 +17,7 @@ class Session extends Model
 {
 	const AUTH_REL = "AUTHENTICATES";
 
-
-	function __construct() {
+	function __c1onstruct() {
 		parent::__construct();
 	}
 
@@ -30,8 +29,8 @@ class Session extends Model
 		$user = new User();
 		$userId = $user->getUserWithCredential($username, $credential);
  
-		if($userId["result"] != -1) {
-			$this->log->info("Node with ID ".$userId['result']." found");
+		if($userId["payload"] != -1) {
+			$this->log->info("Node with ID ".$userId["payload"]." found");
 			//lets create a unique hash
 			$duration = $this->app->config("session.duration");
 			$timestamp = time();
@@ -46,12 +45,12 @@ class Session extends Model
 			$session->setProperty("session_expire", $session_expire);
 			$session->setProperty("session_create_timestamp", $timestamp);
 			// create a relationship between the user and the session
-			$userNode = $this->db_client->getNode($userId['result']);
+			$userNode = $this->db_client->getNode($userId["payload"]);
 			// create the relationship
 			$relationship = $this->db_client->makeRelationship();
 			$relationship->setStartNode($userNode);
 			$relationship->setEndNode($session);
-			$relationship->setType(AUTH_REL);
+			$relationship->setType(self::AUTH_REL);
 
 			try {
 				// save the session
