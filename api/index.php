@@ -52,7 +52,7 @@ $app = new Slim($propertiesArr);
  * is an anonymous function.
  */
 
-$app->get('/user/:id', function($id) {
+$app->get('/user/:username', function($username) {
     $app = Slim::getInstance();
     $result = APIUtils::validateAuthGetRequest($app->request());
     if($result['successful'] == TRUE) {
@@ -62,23 +62,23 @@ $app->get('/user/:id', function($id) {
             $payload['session_key']);
         if($result['successful'] == TRUE) {
             $user = new User();
-            $result = $user->getUser($id);
+            $result = $user->getUser($username);
             APIUtils::configureResponse($app->response(), $result);
         }    
     }
     echo json_encode($result);
 });
 
-$app->post('/authenticate', function() {
+$app->post('/auth', function() {
     $app = Slim::getInstance();
     // validate the POST request
     $result = APIUtils::validatePostRequest($app->request());
     if($result['successful'] == TRUE) {
         $session = new Session();
-        $userDetails = $result['payload'];
+        $user_details = $result['payload'];
         $result = $session->createSession(
-            $userDetails['username'],
-            $userDetails['credential']);
+            $user_details['username'],
+            $user_details['credential']);
     } 
    
     APIUtils::configureResponse($app->response(), $result);
@@ -93,13 +93,13 @@ $app->post('/user/create', function () {
 
     if($result['successful'] == TRUE) {
         $user = new User();
-        $userDetails = $result['payload'];
+        $user_details = $result['payload'];
         $result= $user->createUser(
-            $userDetails['first_name'],
-            $userDetails['last_name'],
-            $userDetails['email_address'],
-            $userDetails['username'],
-            $userDetails['credential']);
+            $user_details['first_name'],
+            $user_details['last_name'],
+            $user_details['email_address'],
+            $user_details['username'],
+            $user_details['credential']);
     } 
 
     APIUtils::configureResponse($app->response(), $result);

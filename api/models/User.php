@@ -19,76 +19,98 @@ class User extends Model
 	}
 
 	/**
-	 * Returns the user node with the specified username and credential
-	 * Returns -1 if it does not exist
+	 * Returns true if a user already with the email address already exists
 	 */
-	function getUserWithCredential($username, $credential) {
-		$queryString = "START n=node:users('username:\"$username\" 
-			AND credential:\"$credential\"') RETURN n";
-		$resultSet = $this->executeQuery($queryString);
-		$userId = -1;
-		if($resultSet->count() == 1) {
-			foreach ($resultSet as $row) {
-				$userId = $row['x']->getId();
-			}
-		} 
-		return APIUtils::wrapResult($userId, TRUE);
-	}
-
-	/**
-	 * Returns false result if a user already with the email address already exists
-	 */
-	function doesUserWithEmailAddressExist($email_address) {
-		$queryString = "START n=node:users(email_address = '$email_address')
+	private function isEmailAddressUsed($email_address) {
+		$query_string = "START n=node:users(email_address = '$email_address')
 			RETURN n";
-		$resultSet = $this->executeQuery($queryString);
-		if($resultSet->count() > 0) {
-			return APIUtils::wrapResult("$email_address is already taken", FALSE);
-		}
-		else return APIUtils::wrapResult();
+		$result_set = $this->executeQuery($query_string);
+		$result = $result_set->count() > 0;
+		return $result;
 	}
 
 	/**
 	 * Returns false result if a user already with the username already exists
 	 */
-	function doesUserWithUsernameExist($username) {
-		$queryString = "START n=node:users(username = '$username')
+	private function isUsernameUsed($username) {
+		$query_string = "START n=node:users(username = '$username')
 			RETURN n";
-		$resultSet = $this->executeQuery($queryString);
-		if($resultSet->count() > 0) {
-			return APIUtils::wrapResult("$username is already taken", FALSE);
-		}
-		else return APIUtils::wrapResult();
-	}
-
-	/**
-	 *	Returns false result if the user already exists
-	 */
-	function doesUserExist($username, $email_address) {
-		$result = $this->doesUserWithUsernameExist($username);
-		if($result['successful'] == TRUE) {
-			return $this->doesUserWithEmailAddressExist($email_address);
-		}
+		$result_set = $this->executeQuery($query_string);
+		$result = $result_set->count() > 0;
 		return $result;
 	}
 
 	/**
 	 * Converts a Neo4j node to a user
 	 */
-	function nodeToUser($node) {
-		return array("user" => array(
+	private function nodeToUser($node) {
+		$user = array("user" => array(
 			"first_name" => $node->getProperty("first_name"),
 			"last_name" => $node->getProperty("last_name"),
 			"email_address" => $node->getProperty("email_address"),
 			"username" => $node->getProperty("username")
 			));
+		return $user;
+	}
+
+	/**
+	 * Returns the user specified by the username
+	 */
+	private function getUserWithUsername($username) {
+		$user = NULL;
+		$query_string = "START user=node:users(username = '$username')
+			RETURN user";
+		$result_set = $this->executeQuery($query_string);
+		if($result_set->count() == 1) {
+			foreach($result_set AS $row) {
+				$user = $this->nodeToUser($row['x']);
+			}
+		}
+		return $user;
+	}
+
+	/**
+	 * Returns the user node with the specified username and credential
+	 * Returns -1 if it does not exist
+	 */
+	public function getUserIdWithCredential($username, $credential) {
+		$query_string = "START n=node:users('username:\"$username\" 
+			AND credential:\"$credential\"') RETURN n";
+		$result_set = $this->executeQuery($query_string);
+		$user_id = -1;
+		if($result_set->count() == 1) {
+			foreach ($result_set as $row) {
+				$user_id = $row['x']->getId();
+			}
+		} 
+		return $user_id;
+	}
+
+	/**
+	 *	Returns false result if the user already exists
+	 */
+	public function doesUserExist($username, $email_address) {
+		$result = NULL;
+		$username_used = $this->isUsernameUsed($username);
+		// check to see if username already used
+		if(!$username_used) {
+			$email_used = $this->isEmailAddressUsed($email_address);
+			if(!$email_used) {
+				$result = APIUtils::wrapResult();
+			} else {
+				$result = APIUtils::wrapResult("Email address is in use", FALSE);
+			}
+		} else {
+			$result = APIUtils::wrapResult("Username is in use", FALSE);
+		}
+		return $result;
 	}
 
 	/**
 	 * Creates a user with the attributes
 	 * Returns a true result with the id of the newly create user if successful
 	 */
-	function createUser($first_name, $last_name, $email_address, $username, 
+	public function createUser($first_name, $last_name, $email_address, $username, 
 		$credential) {
 
 		// verify we have all the required attributes
@@ -103,7 +125,7 @@ class User extends Model
 			if($result['successful'] == FALSE) {
 				return $result;
 			}
-			$userIndex = new NodeIndex($this->db_client, 'users');
+			$user_index = new NodeIndex($this->db_client, 'users');
 			$timestamp = time();
 
 			$user = new Node($this->db_client);
@@ -118,19 +140,19 @@ class User extends Model
 			try {
 				$user = $user->save();
 				// index the new user on attributes
-				$userIndex->add($user, "first_name", $user->getProperty("first_name"));
-				$userIndex->add($user, "last_name", $user->getProperty("last_name"));
-				$userIndex->add($user, "username", $user->getProperty("username"));
-				$userIndex->add($user, "email_address", $user->getProperty("email_address"));
-				$userIndex->add($user, "credential", $user->getProperty("credential"));
-				$userIndex->save();
-				$createdUser = array(
+				$user_index->add($user, "first_name", $user->getProperty("first_name"));
+				$user_index->add($user, "last_name", $user->getProperty("last_name"));
+				$user_index->add($user, "username", $user->getProperty("username"));
+				$user_index->add($user, "email_address", $user->getProperty("email_address"));
+				$user_index->add($user, "credential", $user->getProperty("credential"));
+				$user_index->save();
+				$created_user = array(
 					"first_name" => $first_name,
 					"last_name" => $last_name,
 					"email_address" => $email_address,
 					"username" => $username,
 					"user_id" => $user->getId());
-				return APIUtils::wrapResult($createdUser);
+				return APIUtils::wrapResult($created_user);
 			} catch (Exception $e) {
 				$this->log->error("Error creating a new user");
 				$this->log->error($e->getMessage());
@@ -139,17 +161,22 @@ class User extends Model
 		}
 	}
 
-	function updateUser($id, $first_name, $last_name, $email_address, $username, 
+	public function updateUser($id, $first_name, $last_name, $email_address, $username, 
 		$credential) {
 		return "Not Implemented";
 	}
 
-	function getUser($id) {
-		$userNode = $this->db_client->getNode($id);
-		if(isset($userNode)) {
-			return APIUtils::wrapResult($this->nodeToUser($userNode));
+	/**
+	 * Returns a user
+	 */
+	public function getUser($username) {
+		$result = NULL;
+		$user = $this->getUserWithUsername($username);
+		if(isset($user)) {
+			$result = APIUtils::wrapResult($user);
 		} else {
-			return APIUtils::wrapResult("User with $id does not exist", FALSE);
+			$result = APIUtils::wrapResult("User $username does not exist", FALSE);
 		}
+		return $result;
 	}
 }

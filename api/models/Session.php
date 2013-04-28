@@ -22,15 +22,49 @@ class Session extends Model
 	}
 
 	/**
+	 * Gets the session for the user specified by the session key
+	 */
+	private function getUserSession($username, $session_key) {
+		// for this user, does the session with session_key exist and is it valud
+		$query_string = "START user=node:users('username:\"$username\"')
+			MATCH user-[:AUTHENTICATES]->session
+			WHERE session.session_key = \"$session_key\"
+			RETURN session";
+		$result_set = $this->executeQuery($query_string);
+		$session = NULL;
+		// check to see if we have a valid result
+		if($result_set->count() == 1) {
+			foreach ($result_set AS $row) {
+				$session_key = $row['x']->getProperty('session_key');
+				$session = $this->nodeToSession($row['x']);
+			}
+		}
+		return $session;
+	}
+
+	/**
+	 * Converts a Neo4j node to a session
+	 */
+	private function nodeToSession($node) {
+		$session = array("session" => array(
+			"session_key" => $node->getProperty("session_key"),
+			"session_expire" => $node->getProperty("session_expire"),
+			"session_create_timestamp" => $node->getProperty("session_create_timestamp")
+			));
+		return $session;
+	}
+
+	/**
 	 * Creates and associates an authenticated session to the user
 	 * Returns the hash to use for subsequent API calls
 	 */
-	function createSession($username, $credential) {
+	public function createSession($username, $credential) {
+		$result = NULL;
 		$user = new User();
-		$userId = $user->getUserWithCredential($username, $credential);
+		$userId = $user->getUserIdWithCredential($username, $credential);
  
-		if($userId["payload"] != -1) {
-			$this->log->info("Node with ID ".$userId["payload"]." found");
+		if($userId != -1) {
+			$this->log->info("Node with ID $userId found");
 			//lets create a unique hash
 			$duration = $this->app->config("session.duration");
 			$timestamp = time();
@@ -45,7 +79,7 @@ class Session extends Model
 			$session->setProperty("session_expire", $session_expire);
 			$session->setProperty("session_create_timestamp", $timestamp);
 			// create a relationship between the user and the session
-			$userNode = $this->db_client->getNode($userId["payload"]);
+			$userNode = $this->db_client->getNode($userId);
 			// create the relationship
 			$relationship = $this->db_client->makeRelationship();
 			$relationship->setStartNode($userNode);
@@ -57,23 +91,37 @@ class Session extends Model
 				$session->save();
 				// save the relationship...lol
 				$relationship->save();
-				$sessionDetails = array('session_key' => $session_key,
+				$session_details = array('session_key' => $session_key,
 					'session_expire' => $session_expire);
-				return APIUtils::wrapResult($sessionDetails);
+				$result = APIUtils::wrapResult($session_details);
 			} catch (Exception $e) {
 				$this->log->error("Error creating a new user session");
 				$this->log->error($e->getMessage());
-				return APIUtils::wrapResult("Error creating a new user session", FALSE);
+				$result = APIUtils::wrapResult("Error creating a new user session", FALSE);
 			}
 		} else {
-			return APIUtils::wrapResult("Incorrect username/password combination", FALSE);
+			$result = APIUtils::wrapResult("Incorrect username/password combination", FALSE);
 		}
+		return $result;
 	}
 
 	/**
 	 * Validate session key is active and valid for the current user
 	 */
-	function validateSessionKey($username, $session_key) {
-		return APIUtils::wrapResult("Session is not valid", FALSE);
+	public function validateSessionKey($username, $session_key) {
+		$result = NULL;
+		$session = $this->getUserSession($username, $session_key);
+		if(isset($session)) {
+			// see if the session has expired
+			$current_time = time();
+			if($current_time > $session['session']['session_expire']) {
+				$result = APIUtils::wrapResult("Session has expired", FALSE);
+			} else {
+				$result = APIUtils::wrapResult();
+			}
+		} else {
+			$result = APIUtils::wrapResult("Session is not valid", FALSE);
+		}
+		return $result;
 	}
 }

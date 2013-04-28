@@ -1,0 +1,1 @@
+curl -X POST -d @auth_user.json http://localhost/index.php/auth --header "Content-Type:application/json"
