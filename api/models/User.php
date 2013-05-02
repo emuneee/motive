@@ -112,6 +112,7 @@ class User extends Model
 	 */
 	public function createUser($first_name, $last_name, $email_address, $username, 
 		$credential) {
+		// TODO reduce number of parameters, pass items in as an array
 
 		// verify we have all the required attributes
 		if(!isset($first_name) || !isset($last_name) ||
@@ -146,12 +147,13 @@ class User extends Model
 				$user_index->add($user, "email_address", $user->getProperty("email_address"));
 				$user_index->add($user, "credential", $user->getProperty("credential"));
 				$user_index->save();
+				// TODO use nodeToUser to build object
 				$created_user = array(
 					"first_name" => $first_name,
 					"last_name" => $last_name,
 					"email_address" => $email_address,
 					"username" => $username,
-					"user_id" => $user->getId());
+					"user_id" => $user->getId()); // TODO change to id, not user_id
 				return APIUtils::wrapResult($created_user);
 			} catch (Exception $e) {
 				$this->log->error("Error creating a new user");

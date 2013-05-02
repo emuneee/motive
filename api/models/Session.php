@@ -17,7 +17,7 @@ class Session extends Model
 {
 	const AUTH_REL = "AUTHENTICATES";
 
-	function __c1onstruct() {
+	function __construct() {
 		parent::__construct();
 	}
 
