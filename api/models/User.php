@@ -182,15 +182,7 @@ class User extends Model
 					$user_data["last_name"], $user_data["email_address"], 
 					$user_data["username"], $user_data["credential"]);
 				if(isset($user)) {
-					$new_user = array(
-						"user" => array(
-							"id" => $user->getId(),
-							"first_name" => $user->getProperty("first_name"),
-							"last_name" => $user->getProperty("last_name"),
-							"email_address" => $user->getProperty("email_address"),
-							"username" => $user->getProperty("username")
-						)
-					);
+					$new_user = $this->nodeToUser($user);
 					$result = APIUtils::wrapResult($new_user);
 				} else {
 					$result = APIUtils::wrapResult("Error creating a new user", FALSE);

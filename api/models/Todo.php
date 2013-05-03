@@ -21,10 +21,13 @@ class Todo extends Model {
 		parent::__construct();
 	}
 
+	/**
+	 * Inserts a new todo
+	 */
 	private function insertTodo($title, $description, $completion_date) {	
 		$new_todo = NULL;
 		$timestamp = time();
-		
+		$this->log->info("Inserting a new todo");
 		try {
 			// TODO transaction@!
 			// create the new todo
@@ -36,7 +39,7 @@ class Todo extends Model {
 			$todo->setProperty("updated_datetime", $timestamp);
 			$todo = $todo->save();
 			$result = $this->indexTodo($todo);
-			if($result == TRUE) {
+			if($result) {
 				$new_todo = $todo;
 			} 
 		} catch (Exception $e) {
@@ -46,8 +49,13 @@ class Todo extends Model {
 		return $new_todo;
 	}
 
+	/**
+	 * Indexes a todo
+	 */
 	private function indexTodo($todo) {
 		$result = FALSE;
+		$this->log->info("Indexing a todo");
+
 		try {
 			// index the new todo on attributes
 			$todo_index = new NodeIndex($this->db_client, 'todos');
@@ -63,10 +71,9 @@ class Todo extends Model {
 		return $result;
 	}
 
-	private function tagTodo() {
-
-	}
-
+	/**
+	 * Creates a todo object from a node
+	 */
 	private function nodeToTodo($node) {
 		$todo =  array("todo" => array(
 			"title" => $node->getProperty("title"),
@@ -77,8 +84,13 @@ class Todo extends Model {
 		return $todo;
 	}
 
+	/**
+	 * Creates a new todo
+	 */
 	public function createTodo($todo_data) {
 		$result = NULL;
+		$this->log->info("Creating a new todo");
+
 		// make sure we have all required attributes
 		if(!array_key_exists("title", $todo_data) ||
 			!array_key_exists("description", $todo_data) ||
@@ -89,14 +101,14 @@ class Todo extends Model {
 				FALSE);
 		} else {
 			// create the todo
-
-			// index the new todo
-
+			$todo = $this->insertTodo($todo_data["title"], $todo_data["description"],
+				$todo_data["completion_date"]);
 			// categorize the new todo
+			$category = new Category();
+			$category->categorizeTodo($todo, $todo_data["category"]);
+			// TODO assign an author to the new todo
 
-			// assign an author to the new todo
-
-			// tag the new todo
+			// TODO tag the new todo
 		}
 		return $result;
 	}
