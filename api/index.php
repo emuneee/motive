@@ -69,6 +69,22 @@ $app->get('/user/:username', function($username) {
     echo json_encode($result);
 });
 
+// POST route
+$app->post('/user', function () {
+    $app = Slim::getInstance();
+    // validate the POST request
+    $result = APIUtils::validatePostRequest($app->request());
+
+    if($result['successful'] == TRUE) {
+        $user = new User();
+        $user_details = $result['payload'];
+        $result= $user->createUser($user_details);
+    } 
+
+    APIUtils::configureResponse($app->response(), $result);
+    echo json_encode($result);
+});
+
 $app->post('/auth', function() {
     $app = Slim::getInstance();
     // validate the POST request
@@ -81,27 +97,6 @@ $app->post('/auth', function() {
             $user_details['credential']);
     } 
    
-    APIUtils::configureResponse($app->response(), $result);
-    echo json_encode($result);
-});
-
-// POST route
-$app->post('/user/create', function () {
-    $app = Slim::getInstance();
-    // validate the POST request
-    $result = APIUtils::validatePostRequest($app->request());
-
-    if($result['successful'] == TRUE) {
-        $user = new User();
-        $user_details = $result['payload'];
-        $result= $user->createUser(
-            $user_details['first_name'],
-            $user_details['last_name'],
-            $user_details['email_address'],
-            $user_details['username'],
-            $user_details['credential']);
-    } 
-
     APIUtils::configureResponse($app->response(), $result);
     echo json_encode($result);
 });

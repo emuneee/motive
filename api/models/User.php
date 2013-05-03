@@ -70,6 +70,57 @@ class User extends Model
 	}
 
 	/**
+	 * Inserts a new user into the database
+	 */
+	private function insertUser($first_name, $last_name, $email_address, $username, 
+		$credential) {
+		$new_user = NULL;
+		$timestamp = time();
+
+		try {
+			$user = new Node($this->db_client);
+			$user->setProperty("first_name", $first_name);
+			$user->setProperty("last_name", $last_name);
+			$user->setProperty("email_address", $email_address);
+			$user->setProperty("username", $username);
+			$user->setProperty("credential", $credential);
+			$user->setProperty("create_datetime", $timestamp);
+			$user->setProperty("update_datetime", $timestamp);
+			$user = $user->save();
+			$result = $this->indexUser($user);
+			if($result) {
+				$new_user = $user;
+			}
+		} catch (Exception $e) {
+			$this->log->error("Error creating a new user");
+			$this->log->error($e->getMessage());
+		}
+		return $new_user;
+	}
+
+	/**
+	 * Indexes a user
+	 */
+	private function indexUser($user) {
+		$result = FALSE;
+		try {
+			$user_index = new NodeIndex($this->db_client, 'users');
+			// index the new user on attributes
+			$user_index->add($user, "first_name", $user->getProperty("first_name"));
+			$user_index->add($user, "last_name", $user->getProperty("last_name"));
+			$user_index->add($user, "username", $user->getProperty("username"));
+			$user_index->add($user, "email_address", $user->getProperty("email_address"));
+			$user_index->add($user, "credential", $user->getProperty("credential"));
+			$user_index->save();
+			$result = TRUE;
+		} catch (Exception $e) {
+			$this->log->error("Error indexing user");
+			$this->log->error($e->getMessage());
+		}
+		return $result;
+	}
+
+	/**
 	 * Returns the user node with the specified username and credential
 	 * Returns -1 if it does not exist
 	 */
@@ -90,81 +141,66 @@ class User extends Model
 	 *	Returns false result if the user already exists
 	 */
 	public function doesUserExist($username, $email_address) {
-		$result = NULL;
-		$username_used = $this->isUsernameUsed($username);
+		$does_user_exist = NULL;
+		$is_username_used = $this->isUsernameUsed($username);
 		// check to see if username already used
-		if(!$username_used) {
-			$email_used = $this->isEmailAddressUsed($email_address);
-			if(!$email_used) {
-				$result = APIUtils::wrapResult();
+		if(!$is_username_used) {
+			$is_email_used = $this->isEmailAddressUsed($email_address);
+			if(!$is_email_used) {
+				$does_user_exist = FALSE;
 			} else {
-				$result = APIUtils::wrapResult("Email address is in use", FALSE);
+				$does_user_exist = TRUE;
 			}
 		} else {
-			$result = APIUtils::wrapResult("Username is in use", FALSE);
+			$does_user_exist = TRUE;
 		}
-		return $result;
+		return $does_user_exist;
 	}
 
 	/**
 	 * Creates a user with the attributes
 	 * Returns a true result with the id of the newly create user if successful
 	 */
-	public function createUser($first_name, $last_name, $email_address, $username, 
-		$credential) {
-		// TODO reduce number of parameters, pass items in as an array
-
+	public function createUser($user_data) {
+		$result = NULL;
 		// verify we have all the required attributes
-		if(!isset($first_name) || !isset($last_name) ||
-			!isset($email_address) || !isset($username)
-			|| !isset($credential)) {
-			return APIUtils::wrapResult("All required attributes aren't present", 
+		if(!array_key_exists("first_name", $user_data) || 
+			!array_key_exists("last_name", $user_data) ||
+			!array_key_exists("email_address", $user_data) || 
+			!array_key_exists("username", $user_data) || 
+			!array_key_exists("credential", $user_data)) {
+			$result = APIUtils::wrapResult("All required attributes aren't present", 
 				FALSE);
 		} else {
-			// check to see if a user with the username or email address exists
-			$result = $this->doesUserExist($username, $email_address);
-			if($result['successful'] == FALSE) {
-				return $result;
-			}
-			$user_index = new NodeIndex($this->db_client, 'users');
-			$timestamp = time();
-
-			$user = new Node($this->db_client);
-			$user->setProperty("first_name", $first_name);
-			$user->setProperty("last_name", $last_name);
-			$user->setProperty("email_address", $email_address);
-			$user->setProperty("username", $username);
-			$user->setProperty("credential", $credential);
-			$user->setProperty("create_datetime", $timestamp);
-			$user->setProperty("update_datetime", $timestamp);
-
-			try {
-				$user = $user->save();
-				// index the new user on attributes
-				$user_index->add($user, "first_name", $user->getProperty("first_name"));
-				$user_index->add($user, "last_name", $user->getProperty("last_name"));
-				$user_index->add($user, "username", $user->getProperty("username"));
-				$user_index->add($user, "email_address", $user->getProperty("email_address"));
-				$user_index->add($user, "credential", $user->getProperty("credential"));
-				$user_index->save();
-				// TODO use nodeToUser to build object
-				$created_user = array(
-					"first_name" => $first_name,
-					"last_name" => $last_name,
-					"email_address" => $email_address,
-					"username" => $username,
-					"user_id" => $user->getId()); // TODO change to id, not user_id
-				return APIUtils::wrapResult($created_user);
-			} catch (Exception $e) {
-				$this->log->error("Error creating a new user");
-				$this->log->error($e->getMessage());
-				return APIUtils::wrapResult("Error creating a new user", FALSE);
+			$does_user_exist = $this->doesUserExist($user_data["username"],
+				$user_data["email_address"]);
+			if($does_user_exist) {
+				$result = APIUtils::wrapResult("User already exists", FALSE);
+			} else {
+				// create a new user
+				$user = $this->insertUser($user_data["first_name"], 
+					$user_data["last_name"], $user_data["email_address"], 
+					$user_data["username"], $user_data["credential"]);
+				if(isset($user)) {
+					$new_user = array(
+						"user" => array(
+							"id" => $user->getId(),
+							"first_name" => $user->getProperty("first_name"),
+							"last_name" => $user->getProperty("last_name"),
+							"email_address" => $user->getProperty("email_address"),
+							"username" => $user->getProperty("username")
+						)
+					);
+					$result = APIUtils::wrapResult($new_user);
+				} else {
+					$result = APIUtils::wrapResult("Error creating a new user", FALSE);
+				}
 			}
 		}
+		return $result;
 	}
 
-	public function updateUser($id, $first_name, $last_name, $email_address, $username, 
-		$credential) {
+	public function updateUser($user_data) {
 		return "Not Implemented";
 	}
 
