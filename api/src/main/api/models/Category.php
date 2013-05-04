@@ -7,8 +7,6 @@ use Everyman\Neo4j\Node,
 	Everyman\Neo4j\Client,
 	Everyman\Neo4j\Index\NodeIndex;
 
-require_once 'vendor/autoload.php';
-
 /**
  * Provides functionality to categorize todos
  */

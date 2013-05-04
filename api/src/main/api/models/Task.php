@@ -6,8 +6,6 @@ use Everyman\Neo4j\Client,
 	Everyman\Neo4j\Node,
 	Everyman\Neo4j\Index\NodeIndex;
 
-require_once 'vendor/autoload.php';
-
 /**
  * Handles CRUD operations for the task objects
  */

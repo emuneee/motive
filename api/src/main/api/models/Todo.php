@@ -7,7 +7,6 @@ use Everyman\Neo4j\Client,
 	Everyman\Neo4j\Relationship,
 	Everyman\Neo4j\Index\NodeIndex;
 
-require_once 'vendor/autoload.php';
 /**
  * Handles CRUD operations for the Todo objects
  */

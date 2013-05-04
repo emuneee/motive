@@ -4,8 +4,6 @@ namespace api\utils;
 
 use Slim\Log;
 
-require_once 'vendor/autoload.php';
-
 /**
  * Creates a log file at the designated location
  * that location is document root/../logs
@@ -38,4 +36,12 @@ class LogWriter
 		fwrite($file, "[".self::$levels[$level]."] ".$log_time." - ".$message."\n");
 		fclose($file);
 	}
+
+	public function debug($data) { }
+
+	public function info($data) { }
+
+	public function warn($data) { }
+
+	public function error($data) { }
 }

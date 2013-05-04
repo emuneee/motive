@@ -5,9 +5,7 @@ namespace api\models;
 use Everyman\Neo4j\Client,
 	Everyman\Neo4j\Cypher\Query,
 	Slim\Slim;
-
-require_once 'vendor/autoload.php';
-
+	
 /**
  * Base model class, contains common functionality
  */
@@ -27,10 +25,6 @@ class Model
 			$this->config["database.hostname"], 
 			$this->config["database.port"]);
 		$this->log = $log_writer;
-	}
-
-	function __autoload($class_name) {
-    	require_once($class_name . '.php');
 	}
 
 	/**

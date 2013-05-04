@@ -8,8 +8,6 @@ use phpSec\Crypt\Hash,
 	Everyman\Neo4j\Relationship,
 	Everyman\Neo4j\Client;
 
-require_once 'vendor/autoload.php';
-
 /**
  * Provides mechanisms for authenticating with the API
  */

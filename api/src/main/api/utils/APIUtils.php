@@ -4,8 +4,6 @@ namespace api\utils;
 
 use Slim\Slim;
 
-require_once 'vendor/autoload.php';
-
 /**
  * API Utils contains commonly used API functions
  */
