@@ -2,7 +2,8 @@
 
 namespace api\models;
 
-use Everyman\Neo4j\Client,
+use api\utils\APIUtils,
+	Everyman\Neo4j\Client,
 	Everyman\Neo4j\Node,
 	Everyman\Neo4j\Index\NodeIndex;
 
@@ -66,6 +67,21 @@ class User extends Model
 			}
 		}
 		return $user;
+	}
+
+	private function deleteUser($username) {
+		$result = FALSE;
+		$query_string = "START node=node:users(username = '$username')
+			DELETE node";
+		try {
+			$result_set = $this->executeQuery($query_string);
+			$result = TRUE;
+		} catch (Exception $e) {
+			$this->log->error("Error deleting user");
+			$this->log->error($e->getMessage());
+		}
+
+		return $result;
 	}
 
 	/**
@@ -205,6 +221,17 @@ class User extends Model
 			$result = APIUtils::wrapResult($user);
 		} else {
 			$result = APIUtils::wrapResult("User $username does not exist", FALSE);
+		}
+		return $result;
+	}
+
+	public function removeUser($username) {
+		$result = NULL;
+		$outcome = $this->deleteUser($username);
+		if($outcome) {
+			$result = APIUtils::wrapResult();
+		} else {
+			$result = APIUtils::wrapResult("User $username was not deleted", FALSE);
 		}
 		return $result;
 	}
