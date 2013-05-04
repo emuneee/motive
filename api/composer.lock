@@ -3,7 +3,7 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "9f89940851bf60224c2054bdb0c620c7",
+    "hash": "5e6551505361794931d9c9f16173a7bf",
     "packages": [
         {
             "name": "everyman/neo4jphp",

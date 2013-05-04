@@ -1,15 +1,13 @@
 <?php
 
+namespace api\models;
+
 use Everyman\Neo4j\Client,
 	Everyman\Neo4j\Node,
 	Everyman\Neo4j\Relationship,
 	Everyman\Neo4j\Index\NodeIndex;
 
-require_once 'utils/APIUtils.php';
-require_once 'Category.php';
-require 'vendor/autoload.php';
-require_once 'Model.php';
-
+require_once 'vendor/autoload.php';
 /**
  * Handles CRUD operations for the Todo objects
  */
@@ -17,8 +15,8 @@ class Todo extends Model {
 
 	const TAG_REL = "TAG";
 
-	function __construct() {
-		parent::__construct();
+	function __construct($db_properties, $log_writer) {
+		parent::__construct($db_properties, $log_writer);
 	}
 
 	/**

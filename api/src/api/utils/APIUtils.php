@@ -1,14 +1,20 @@
 <?php
 
+namespace api\utils;
+
 use Slim\Slim;
 
-require 'vendor/autoload.php';
+require_once 'vendor/autoload.php';
 
 /**
  * API Utils contains commonly used API functions
  */
 class APIUtils
 {
+
+	function __autoload($class_name) {
+    	require_once $class_name . '.php';
+	}
 
 	/**
 	 * Configures the HTTP response before its sent back to the client

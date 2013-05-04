@@ -1,9 +1,13 @@
 <?php
 
+namespace api\models;
+
 use Everyman\Neo4j\Node,
 	Everyman\Neo4j\Relationship,
 	Everyman\Neo4j\Client,
 	Everyman\Neo4j\Index\NodeIndex;
+
+require_once 'vendor/autoload.php';
 
 /**
  * Provides functionality to categorize todos
@@ -12,8 +16,8 @@ class Category extends Model {
 	
 	const CATEGORY_REL = "CATEGORY";
 
-	function __construct() {
-		parent::__construct();
+	function __construct($db_properties, $log_writer) {
+		parent::__construct($db_properties, $log_writer);
 	}
 
 	private function nodeToCategory($node) {

@@ -1,10 +1,12 @@
 <?php
 
+namespace api\models;
+
 use Everyman\Neo4j\Client,
 	Everyman\Neo4j\Cypher\Query,
 	Slim\Slim;
 
-require 'vendor/autoload.php';
+require_once 'vendor/autoload.php';
 
 /**
  * Base model class, contains common functionality
@@ -14,16 +16,21 @@ class Model
 
 	protected $db_client;
 	protected $log;
-	protected $app;
+	protected $config;
 
 	/**
 	 * Constructor
 	 */
-	function __construct() {
-		$this->app = Slim::getInstance();
-		$this->db_client = new Client($this->app->config("database.hostname", 
-			$this->app->config("database.port")));
-		$this->log = $this->app->getLog();
+	function __construct($config, $log_writer) {
+		$this->config = $config;
+		$this->db_client = new Client(
+			$this->config["database.hostname"], 
+			$this->config["database.port"]);
+		$this->log = $log_writer;
+	}
+
+	function __autoload($class_name) {
+    	require_once($class_name . '.php');
 	}
 
 	/**

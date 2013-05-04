@@ -1,8 +1,10 @@
 <?php
 
+namespace api\utils;
+
 use Slim\Log;
 
-require 'vendor/autoload.php';
+require_once 'vendor/autoload.php';
 
 /**
  * Creates a log file at the designated location

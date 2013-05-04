@@ -1,14 +1,14 @@
 <?php
 
+namespace api\models;
+
 use phpSec\Crypt\Hash,
 	phpSec\Core,
 	Everyman\Neo4j\Node,
 	Everyman\Neo4j\Relationship,
 	Everyman\Neo4j\Client;
 
-require_once 'Model.php';
-require_once 'User.php';
-require_once $_SERVER['DOCUMENT_ROOT'].'/utils/APIUtils.php';
+require_once 'vendor/autoload.php';
 
 /**
  * Provides mechanisms for authenticating with the API
@@ -17,8 +17,8 @@ class Session extends Model
 {
 	const AUTH_REL = "AUTHENTICATES";
 
-	function __construct() {
-		parent::__construct();
+	function __construct($db_properties, $log_writer) {
+		parent::__construct($db_properties, $log_writer);
 	}
 
 	/**
@@ -60,7 +60,7 @@ class Session extends Model
 	 */
 	public function createSession($username, $credential) {
 		$result = NULL;
-		$user = new User();
+		$user = new User($this->config, $this->log);
 		$userId = $user->getUserIdWithCredential($username, $credential);
  
 		if($userId != -1) {

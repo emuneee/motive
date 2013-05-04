@@ -7,17 +7,14 @@
  *
  * If you are using Composer, you can skip this step.
  */
-#require 'Slim/Slim.php';
-use Slim\Slim,
+use api\utils\LogWriter,
+    api\utils\APIUtils,
+    api\models\User,
+    api\models\Session,
+    Slim\Slim,
     Slim\Log;
 
-require_once 'utils/APIUtils.php';
-require_once 'utils/LogWriter.php';
-require_once 'models/User.php';
-require_once 'models/Session.php';
-require 'vendor/autoload.php';
-
-Slim::registerAutoloader();
+require_once 'vendor/autoload.php';
 
 // load the motive.properties file
 $properties = parse_ini_file("../config/motive.properties");
@@ -56,12 +53,12 @@ $app->get('/user/:username', function($username) {
     $app = Slim::getInstance();
     $result = APIUtils::validateAuthGetRequest($app->request());
     if($result['successful'] == TRUE) {
-        $session = new Session();
+        $session = new Session($app->config, $app->getLog());
         $payload = $result['payload'];
         $result = $session->validateSessionKey($payload['username'], 
             $payload['session_key']);
         if($result['successful'] == TRUE) {
-            $user = new User();
+            $user = new User($app->config, $app->getLog());
             $result = $user->getUser($username);
             APIUtils::configureResponse($app->response(), $result);
         }    
@@ -76,7 +73,7 @@ $app->post('/user', function () {
     $result = APIUtils::validatePostRequest($app->request());
 
     if($result['successful'] == TRUE) {
-        $user = new User();
+        $user = new User($app->config, $app->getLog());
         $user_details = $result['payload'];
         $result= $user->createUser($user_details);
     } 
@@ -90,7 +87,7 @@ $app->post('/auth', function() {
     // validate the POST request
     $result = APIUtils::validatePostRequest($app->request());
     if($result['successful'] == TRUE) {
-        $session = new Session();
+        $session = new Session($app->config, $app->getLog());
         $user_details = $result['payload'];
         $result = $session->createSession(
             $user_details['username'],
