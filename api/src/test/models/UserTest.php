@@ -65,6 +65,20 @@ class UserTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * @depends testGetUser
 	 */
+	function testUpdateUser() {
+		$user_data = array(
+			"id" => "01",
+			"first_name" => "Test",
+			"last_name" => "Man",
+			"email_address" => "test.man@auto.com",
+			"credential" => "password");
+		$result = $this->user->updateuser($user_data);
+		$this->assertEquals(TRUE, $result["successful"]);
+	}
+
+	/**
+	 * @depends testGetUser
+	 */
 	function testUserDelete() {
 		$result = $this->user->removeUser("testman01");
 		$this->assertEquals(TRUE, $result["successful"]);

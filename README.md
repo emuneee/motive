@@ -13,6 +13,7 @@
 [Download Motive](#motive)  
 [Apache Setup](#apache)  
 [Enable URL Rewrite](#rewrite)  
+[PHP Unit Tests](#unittests)
 
 
 <a name="evnsetup"/>
@@ -66,7 +67,6 @@ From /motive/api run:
 
 <a name="apache"/>
 ##Apache Setup
-
 1. Configure `Apache 2.2.22` to point to the Motive application by updating /motive/motive.conf
 	* Open /motive/motive.conf and update the `DocumentRoot` and `Directory` with your own paths
 		* `DocumentRoot` should point to .../motive/api
@@ -94,3 +94,21 @@ ln -s ../mods-available/rewrite.load rewrite.load
 ##Test Your Setup
 
 1.  Visit http://localhost/index.php.  If the Slim PHP page loads, your setup is correct.  If not, check your Apache logs for errors.
+
+<a name="unittest"/>
+##PHP Unit Testing
+
+For unit testing, we will be using the PHPUnit test framework.  It can be acquired here
+
+Mac OS X (more or less) - http://www.newmediacampaigns.com/page/install-pear-phpunit-xdebug-on-macosx-snow-leopard
+
+Linux - http://www.giocc.com/installing-phpunit-on-ubuntu-11-04-natty-narwhal.html
+
+##Running Unit Tests
+
+Unit tests can be using the following command
+
+phpunit --verbose NameOfTestHere
+
+
+

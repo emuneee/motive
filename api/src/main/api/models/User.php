@@ -208,7 +208,8 @@ class User extends Model
 	}
 
 	public function updateUser($user_data) {
-		return "Not Implemented";
+		$result = APIUtils::wrapResult("Update user not implemented", FALSE);
+		return $result;
 	}
 
 	/**
