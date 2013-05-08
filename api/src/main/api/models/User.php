@@ -137,19 +137,20 @@ class User extends Model
 
 	/**
 	 * Returns the user node with the specified username and credential
-	 * Returns -1 if it does not exist
+	 * Returns NULL if it does not exist
 	 */
-	public function getUserIdWithCredential($username, $credential) {
+	public function getUserWithCredential($username, $credential) {
+		$user = NULL;
 		$query_string = "START n=node:users('username:\"$username\" 
 			AND credential:\"$credential\"') RETURN n";
 		$result_set = $this->executeQuery($query_string);
-		$user_id = -1;
+
 		if($result_set->count() == 1) {
 			foreach ($result_set as $row) {
-				$user_id = $row['x']->getId();
+				$user = $this->nodeToUser($row['x']);
 			}
 		} 
-		return $user_id;
+		return $user;
 	}
 
 	/**

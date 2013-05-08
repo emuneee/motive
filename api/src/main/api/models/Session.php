@@ -23,6 +23,7 @@ class Session extends Model
 	 * Gets the session for the user specified by the session key
 	 */
 	private function getUserSession($username, $session_key) {
+		$this->log->info("Retrieving a user session");
 		// for this user, does the session with session_key exist and is it valud
 		$query_string = "START user=node:users('username:\"$username\"')
 			MATCH user-[:AUTHENTICATES]->session
@@ -53,16 +54,13 @@ class Session extends Model
 	}
 
 	/**
-	 * Creates and associates an authenticated session to the user
-	 * Returns the hash to use for subsequent API calls
+	 * Inserts a new session
 	 */
-	public function createSession($username, $credential) {
-		$result = NULL;
-		$user = new User($this->config, $this->log);
-		$userId = $user->getUserIdWithCredential($username, $credential);
- 
-		if($userId != -1) {
-			$this->log->info("Node with ID $userId found");
+	private function insertSession($username, $credential) {
+		$this->log->info("Inserting a new session");
+		$new_session = NULL;
+
+		try {
 			//lets create a unique hash
 			$duration = $this->app->config("session.duration");
 			$timestamp = time();
@@ -76,29 +74,72 @@ class Session extends Model
 			$session->setProperty("session_key", $session_key);
 			$session->setProperty("session_expire", $session_expire);
 			$session->setProperty("session_create_timestamp", $timestamp);
-			// create a relationship between the user and the session
-			$userNode = $this->db_client->getNode($userId);
-			// create the relationship
-			$relationship = $this->db_client->makeRelationship();
-			$relationship->setStartNode($userNode);
+			$new_session = $session->save();
+			// TODO index our new session
+		} catch (Exception $e) {
+			$this->log->error("Error creating session");
+			$this->log->error($e->getMessage());
+		}
+
+		return $new_session;
+	}
+
+	/**
+	 * Establishes and authenticated relationship between the user and the session
+	 */
+	private function createAuthenticationRelationship($user, $session) {
+		$this->log->info("Creating relationship between user and session");
+		$result = FALSE;
+
+		try {
+			$relationship = $this->db_client->makeRelationship;
+			$relationship->setStartNode($user);
 			$relationship->setEndNode($session);
 			$relationship->setType(self::AUTH_REL);
+			$relationship->save();
+			$result = TRUE;
+		} catch (Exception $e) {
+			$this->log->error("Error creating relationship to session");
+			$this->log->error($e->getMessage());
+		}
 
-			try {
-				// save the session
-				$session->save();
-				// save the relationship...lol
-				$relationship->save();
-				$session_details = array('session_key' => $session_key,
-					'session_expire' => $session_expire);
-				$result = APIUtils::wrapResult($session_details);
-			} catch (Exception $e) {
-				$this->log->error("Error creating a new user session");
-				$this->log->error($e->getMessage());
-				$result = APIUtils::wrapResult("Error creating a new user session", FALSE);
-			}
+		return $result;
+	}
+
+	/**
+	 * Creates and associates an authenticated session to the user
+	 * Returns the hash to use for subsequent API calls
+	 */
+	public function createSession($session_data) {
+		$result = NULL;
+
+		// verify we have all the required attributes
+		if(!array_key_exists("username", $session_data) || 
+			!array_key_exists("credential", $session_data)) {
+			$result = APIUtils::wrapResult("All required attributes aren't present", 
+				FALSE);
 		} else {
-			$result = APIUtils::wrapResult("Incorrect username/password combination", FALSE);
+ 			$user_model = new User($this->config, $this->log);
+			$user = $user_model->getUserWithCredential($session_data["username"], 
+				$session_data["credential"]);
+
+			if(isset($user)) {
+				$this->log->info("Node with ID $userId found");
+				// create the session
+				$session = $this->insertSession($username, $credential);
+				// create a relationship between the user and the session
+				$userNode = $this->db_client->getNode($userId);
+
+				$relationship_created = createAuthenticationRelationship($user, $session);
+				if($relationship_created) {
+					$session_details = array(
+						"session_key" => $session_key,
+						"session_expire" => $session_expire);
+					$result = APIUtils::wrapResult($session_details);
+				}
+			} else {
+				$result = APIUtils::wrapResult("Incorrect username/password combination", FALSE);
+			}
 		}
 		return $result;
 	}
